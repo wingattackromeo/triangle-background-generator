@@ -36,10 +36,11 @@ else
 
 echo '<?xml version="1.0" standalone="no"?>' . "\n";
 echo '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' . "\n";
-echo '<svg viewBox="0 0 ' . $width . ' ' . $height . '" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">' . "\n";
+echo '<svg viewBox="0 0 ' . $width . ' ' . $height . '" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:square;stroke-miterlimit:1.41421;">' . "\n";
 
 $colmax = count($colours) - 1;
 $vert = (sqrt(3) / 2) * $size;
+$strokewidth = '0.25px';
 
 $downpath = 'M0,0L' . ($size / 2) . ',' . $vert . 'L' . $size . ',0L0,0Z';
 $uppath = 'M' . ($size / 2) . ',' . $vert . 'L-' . ($size / 2) . ',' . $vert . 'L0,0L' . ($size / 2) . ',' . $vert . 'Z';
@@ -52,11 +53,11 @@ for($y = 0; $y <= $height; $y += $vert)
 	{
 		$col = rand(0, $colmax);
 		echo "\t\t" . '<g transform="matrix(1,0,0,1,' . $x . ',' . $y . ')">' . "\n";
-		echo "\t\t\t" . '<path d="' . $downpath . '" style="fill:' . $colours[$col] . '"/>' . "\n";
+		echo "\t\t\t" . '<path d="' . $downpath . '" style="stroke-width:' . $strokewidth . ';fill:' . $colours[$col] . ';stroke:' . $colours[$col] . '"/>' . "\n";
 		echo "\t\t" . '</g>' . "\n";
 		$col = rand(0, $colmax);
 		echo "\t\t" . '<g transform="matrix(1,0,0,1,' . $x . ',' . $y . ')">' . "\n";
-		echo "\t\t\t" . '<path d="' . $uppath . '" style="fill:' . $colours[$col] . '"/>' . "\n";
+		echo "\t\t\t" . '<path d="' . $uppath . '" style="stroke-width:' . $strokewidth . ';fill:' . $colours[$col] . ';stroke:' . $colours[$col] . '"/>' . "\n";
 		echo "\t\t" . '</g>' . "\n";
 	}
 	echo "\t" . '</g>' . "\n";
