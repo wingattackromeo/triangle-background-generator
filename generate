@@ -19,7 +19,7 @@ if(count($argv) >= 4)
 		fprintf($stderr, "%s: colour palette '%s' is not supported\n", $argv[0], $argv[3]);
 		exit(1);
 	}
-	$colour = $palette[$argv[3]];
+	$colours = $palette[$argv[3]];
 }
 else
 {
