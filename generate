@@ -2,7 +2,9 @@
 <?php
 
 require_once(dirname(__FILE__) . '/palette.php');
+require_once(dirname(__FILE__) . '/lib/svggenerator.php');
 
+$stdout = fopen('php://stdout', 'w');
 $stderr = fopen('php://stderr', 'w');
 if(count($argv) < 3 || count($argv) > 5)
 {
@@ -34,34 +36,8 @@ else
 	$size = 32;
 }
 
-echo '<?xml version="1.0" standalone="no"?>' . "\n";
-echo '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">' . "\n";
-echo '<svg viewBox="0 0 ' . $width . ' ' . $height . '" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:square;stroke-miterlimit:1.41421;">' . "\n";
-
-$colmax = count($colours) - 1;
-$vert = (sqrt(3) / 2) * $size;
-$strokewidth = '0.25px';
-
-$downpath = 'M0,0L' . ($size / 2) . ',' . $vert . 'L' . $size . ',0L0,0Z';
-$uppath = 'M' . ($size / 2) . ',' . $vert . 'L-' . ($size / 2) . ',' . $vert . 'L0,0L' . ($size / 2) . ',' . $vert . 'Z';
-
-$row = 0;
-for($y = 0; $y <= $height; $y += $vert)
-{
-	echo "\t" . '<g id="row' . $row . '">' . "\n";
-	for($x = ($row % 2 ? -($size * 1.5) : -($size * 2)); $x <= $width + ($row %2 ? ($size * 1.5) : $size); $x += $size)
-	{
-		$col = rand(0, $colmax);
-		echo "\t\t" . '<g transform="matrix(1,0,0,1,' . $x . ',' . $y . ')">' . "\n";
-		echo "\t\t\t" . '<path d="' . $downpath . '" style="stroke-width:' . $strokewidth . ';fill:' . $colours[$col] . ';stroke:' . $colours[$col] . '"/>' . "\n";
-		echo "\t\t" . '</g>' . "\n";
-		$col = rand(0, $colmax);
-		echo "\t\t" . '<g transform="matrix(1,0,0,1,' . $x . ',' . $y . ')">' . "\n";
-		echo "\t\t\t" . '<path d="' . $uppath . '" style="stroke-width:' . $strokewidth . ';fill:' . $colours[$col] . ';stroke:' . $colours[$col] . '"/>' . "\n";
-		echo "\t\t" . '</g>' . "\n";
-	}
-	echo "\t" . '</g>' . "\n";
-	$row++;
-}
-
-echo '</svg>' . "\n";
+$generator = new SVGGenerator();
+$generator->palette->set($colours);
+$generator->setDimensions($width, $height);
+$generator->setSize($size);
+$generator->generate($stdout);
