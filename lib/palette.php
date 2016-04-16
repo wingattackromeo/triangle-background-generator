@@ -4,6 +4,8 @@ class Palette
 {
 	protected $colours;
 	protected $colcount;
+	protected $seed;
+	protected $seeded;
 	
 	public function __construct()
 	{
@@ -18,7 +20,33 @@ class Palette
 	
 	public function random()
 	{
+		global $stderr, $argv;
+		
+		if($this->seed === null)
+		{
+			list($usec, $sec) = explode(' ', microtime());
+			$this->seed = round((float) $sec + ((float) $usec * 100000));
+			fprintf($stderr, "%s: random seed set to %d\n", $argv[0], $this->seed);
+		}
+		if(!$this->seeded)
+		{
+			srand($this->seed);
+			$this->seeded = true;
+		}
 		return $this->colours[rand(0, $this->colcount - 1)];
+	}
+	
+	public function parseSeed($str)
+	{
+		global $stderr, $argv;
+		
+		$seed = intval($str);
+		if($seed < 1)
+		{
+			fprintf($stderr, "%s: random seed must be a positive integer\n", $argv[0]);
+			exit(1);
+		}
+		$this->seed = $seed;
 	}
 	
 	public function set($colours)

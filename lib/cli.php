@@ -36,7 +36,7 @@ while(count($argv) > 1)
 	{
 		$optarg = null;
 	}
-	if(!strlen($optarg) && strpos('dsc', $opt))
+	if(!strlen($optarg) && strpos('dscr', $opt))
 	{
 		fprintf($stderr, "%s: option '-%s' requires an argument\n", $argv[0], $opt);
 		exit(1);
@@ -54,6 +54,9 @@ while(count($argv) > 1)
 		break;
 	case 'c':
 		$palette = $optarg;
+		break;
+	case 'r':
+		$generator->palette->parseSeed($optarg);
 		break;
 	default:
 		fprintf($stderr, "%s: unknown option '-%s'\n", $argv[0], $opt);
@@ -75,6 +78,7 @@ function usage()
 	printf("  -d WIDTHxHEIGHT           Set output dimensions to WIDTHxHEIGHT\n");
 	printf("  -s SIZE                   Set triangle edge size to SIZE\n");
 	printf("  -c PALETTE                Set colour palette to PALETTE\n");
+	printf("  -r SEED                   Set random seed to SEED\n");
 	printf("\n");
 }
 
