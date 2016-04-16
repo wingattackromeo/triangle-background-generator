@@ -1,43 +1,30 @@
-#! /usr/bin/php -f
-<?php
+#! /bin/sh
 
-require_once(dirname(__FILE__) . '/palette.php');
-require_once(dirname(__FILE__) . '/lib/svggenerator.php');
+here=`pwd`
 
-$stdout = fopen('php://stdout', 'w');
-$stderr = fopen('php://stderr', 'w');
-if(count($argv) < 3 || count($argv) > 5)
-{
-	fprintf($stderr, "Usage: %s WIDTH HEIGHT [COLOUR] [TRIANGLE-SIZE] > file.svg\n", $argv[0]);
-	exit(1);
-}
+# This can be changed to an absolute path, e.g., if there's an installed
+# version (in which case, it might be, for example,
+# /usr/lib/triangle-background-generator)
 
-$width = intval($argv[1]);
-$height = intval($argv[2]);
-if(count($argv) >= 4)
-{
-	if(!isset($palette[$argv[3]]))
-	{
-		fprintf($stderr, "%s: colour palette '%s' is not supported\n", $argv[0], $argv[3]);
-		exit(1);
-	}
-	$colours = $palette[$argv[3]];
-}
+deflib="$here"
+
+case "$0" in
+	*/*)
+		reldir=`dirname "$0"`
+		cd "$reldir"
+		if test -d lib && test -f lib/cli.php ; then
+			libdir="`pwd`/lib"
+		else
+			libdir="$deflib"
+		fi
+		;;
+	*)
+		libdir="$deflib"
+esac
+
+if test -f "$libdir/cli.php" ; then
+	exec php -f "$libdir/cli.php" -- "$@"
 else
-{
-	$colours = $palette['blue'];
-}
-if(count($argv) >= 5)
-{
-	$size = intval($argv[4]);
-}
-else
-{
-	$size = 32;
-}
-
-$generator = new SVGGenerator();
-$generator->palette->set($colours);
-$generator->setDimensions($width, $height);
-$generator->setSize($size);
-$generator->generate($stdout);
+	echo "$0: cannot locate $libdir/cli.php" >&2
+	exit 1
+fi

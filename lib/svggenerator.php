@@ -24,10 +24,48 @@ class SVGGenerator
 		$this->height = $height;
 	}
 	
+	public function parseDimensions($str)
+	{
+		global $stderr, $argv;
+		
+		$dims = explode('x', $str);
+		if(count($dims) != 2)
+		{
+			fprintf($stderr, "%s: dimensions must be in the form WIDTHxHEIGHT\n", $argv[0]);
+			exit(1);
+		}
+		$width = intval($dims[0]);
+		if($width < 1)
+		{
+			fprintf($stderr, "%s: width must be a positive integer\n", $argv[0]);
+			exit(1);
+		}
+		$height = intval($dims[1]);
+		if($height < 1)
+		{
+			fprintf($stderr, "%s: height must be a positive integer\n", $argv[0]);
+			exit(1);
+		}
+		$this->setDimensions($width, $height);
+	}
+	
 	public function setSize($size)
 	{
 		$this->size = $size;
 		$this->vert = (sqrt(3) / 2) * $size;
+	}
+	
+	public function parseSize($str)
+	{
+		global $stderr, $argv;
+		
+		$size = intval($str);
+		if($size < 1)
+		{
+			fprintf($stderr, "%s: size must be a positive integer\n", $argv[0]);
+			exit(1);
+		}
+		$this->setSize($size);
 	}
 	
 	public function generate($file)
