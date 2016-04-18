@@ -10,12 +10,34 @@ class SVGGenerator
 	protected $height;
 	protected $size;
 	protected $vert;
+	protected $filename;
 	
 	public function __construct()
 	{
 		$this->palette = new Palette();
 		$this->setDimensions(1920, 1080);
 		$this->setSize(32);
+	}
+	
+	public function setFilename($str)
+	{
+		$this->filename = $str;
+	}
+	
+	public function filename()
+	{
+		if(strlen($this->filename))
+		{
+			return $this->filename;
+		}
+		$fn = $this->palette->seed();
+		$name = $this->palette->name();
+		if(strlen($name))
+		{
+			$fn .= '-' . $name;
+		}
+		$fn .= '-' . $this->width . 'x' . $this->height . '-' . $this->size . '.svg';
+		return $fn;
 	}
 	
 	public function setDimensions($width, $height)

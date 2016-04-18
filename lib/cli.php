@@ -58,6 +58,9 @@ while(count($argv) > 1)
 	case 'r':
 		$generator->palette->parseSeed($optarg);
 		break;
+	case 'o':
+		$generator->setFilename($optarg);
+		break;
 	default:
 		fprintf($stderr, "%s: unknown option '-%s'\n", $argv[0], $opt);
 		exit(1);
@@ -67,19 +70,32 @@ while(count($argv) > 1)
 }
 
 $generator->palette->load($palette);
-$generator->generate($stdout);
+
+$filename = $generator->filename();
+$outfile = fopen($filename, 'w');
+if(!is_resource($outfile))
+{
+	fprintf($stderr, "%s: failed to open '%s' for writing\n", $argv[0], $filename);
+	exit(1);
+}
+
+$generator->generate($outfile);
+
+fclose($outfile);
 
 function usage()
 {
 	global $argv;
 	
-	printf("Usage: %s [OPTIONS] > file.svg\n\n", $argv[0]);
+	printf("Usage: %s [OPTIONS]\n\n", $argv[0]);
 	printf("OPTIONS is one or more of:\n");
 	printf("  -d WIDTHxHEIGHT           Set output dimensions to WIDTHxHEIGHT\n");
 	printf("  -s SIZE                   Set triangle edge size to SIZE\n");
 	printf("  -c PALETTE                Set colour palette to PALETTE\n");
 	printf("  -r SEED                   Set random seed to SEED\n");
+	printf("  -o FILENAME.svg           Set output filename\n");
 	printf("\n");
+	printf("If no filename is specified, one will be generated from the image parameters.\n");
 }
 
 /*

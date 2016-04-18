@@ -6,6 +6,7 @@ class Palette
 	protected $colcount;
 	protected $seed;
 	protected $seeded;
+	protected $name = '';
 	
 	public function __construct()
 	{
@@ -17,8 +18,8 @@ class Palette
 	{
 		return $this->colcount;
 	}
-	
-	public function random()
+
+	public function seed()
 	{
 		global $stderr, $argv;
 		
@@ -33,6 +34,17 @@ class Palette
 			srand($this->seed);
 			$this->seeded = true;
 		}
+		return $this->seed;
+	}
+	
+	public function name()
+	{
+		return $this->name;
+	}
+	
+	public function random()
+	{
+		$this->seed();
 		return $this->colours[rand(0, $this->colcount - 1)];
 	}
 	
@@ -91,6 +103,7 @@ class Palette
 			fprintf($stderr, "%s: '%s' does not contain any colours\n", $argv[0], $path);
 			exit(1);
 		}
+		$this->name = basename($path, '.txt');
 		$this->colours = $colours;
 		$this->colcount = count($colours);
 	}
